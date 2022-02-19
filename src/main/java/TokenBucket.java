@@ -3,8 +3,8 @@ import java.util.Date;
 public class TokenBucket {
     private final double tokencapacity;
     private double tokens;
-    private final long timerate;
-    private long timestamp;
+    private final double timerate;
+    private double timestamp;
 
     TokenBucket(double capacity, long rate) {
         this.tokencapacity = capacity;
@@ -14,13 +14,13 @@ public class TokenBucket {
     }
 
     public double getTokens() {
-        if (tokens < tokencapacity) {
+        if (this.tokens < tokencapacity) {
             long now = new Date().getTime();
-            double delta = timerate / 1000 * (now / 1000 - timestamp / 1000);
-            this.tokens = Math.min(tokencapacity, (tokens + delta));
+            double delta = now  - timestamp;
+            this.tokens = Math.min(tokencapacity, tokens + (tokencapacity * delta/timerate));
             this.timestamp = now;
         }
-        return tokens;
+        return this.tokens;
     }
 
     public boolean Consume(int count) {
