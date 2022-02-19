@@ -16,8 +16,8 @@ public class TokenBucket {
     public double getTokens() {
         if (this.tokens < tokencapacity) {
             long now = new Date().getTime();
-            double delta = now  - timestamp;
-            this.tokens = Math.min(tokencapacity, tokens + (tokencapacity * delta/timerate));
+            double delta = now - timestamp;
+            this.tokens = Math.min(tokencapacity, tokens + (tokencapacity * delta / timerate));
             this.timestamp = now;
         }
         return this.tokens;
@@ -32,5 +32,4 @@ public class TokenBucket {
             return false;
         }
     }
-
 }
