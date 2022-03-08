@@ -2,13 +2,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BucketManager{
+public class BucketManager {
     private List<Config> config;
-    List<TokenBucket> bucketList;
+    private List<TokenBucket> bucketList;
 
-    BucketManager(){
-        this.config  = new ArrayList<>();
+    BucketManager() {
+        this.config = new ArrayList<>();
         this.bucketList = new ArrayList<>();
+    }
+
+    public boolean consume(int count) {
+        boolean consumed = bucketList.stream().allMatch(bucket -> count <= bucket.getTokens());
+        if (consumed) {
+            bucketList.forEach(bucket -> bucket.consume(count));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -17,34 +26,28 @@ public class BucketManager{
                 "bucketList=" + bucketList +
                 '}';
     }
-    public boolean consume(int count){
-        boolean consumed = bucketList.stream().allMatch(bucket -> count <= bucket.getTokens());
-        if(consumed){
-            bucketList.forEach(bucket -> bucket.consume(count));
-            return true;
-        }
-        return false;
-    }
 
-    public static class Builder{
+    public static class Builder {
         private BucketManager manager;
-        Builder(){
+
+        Builder() {
             manager = new BucketManager();
         }
 
-        public Builder addConfiguration(Config config){
+        public Builder addConfiguration(Config config) {
             manager.config.add(config);
             return this;
         }
+
         public BucketManager build() throws Exception {
-            if(manager.config.size() > 0){
-                for(int i=0;i<manager.config.size();i++){
-                    manager.bucketList.add(new TokenBucket(manager.config.get(i).getCapacity(),manager.config.get(i).getRate()));
+            if (manager.config.size() > 0) {
+                for (int i = 0; i < manager.config.size(); i++) {
+                    manager.bucketList.add(new TokenBucket(manager.config.get(i).getCapacity(), manager.config.get(i).getRate()));
                 }
 
                 return manager;
             }
-          throw new Exception("Empty config list");
+            throw new Exception("Empty config list");
         }
     }
 }
@@ -57,7 +60,7 @@ class TokenBucket {
 
     TokenBucket(double capacity, long rate) {
         this.tokencapacity = capacity;
-        this.rate = capacity/rate;
+        this.rate = capacity / rate;
         this.tokens = tokencapacity;
         this.timestamp = new Date().getTime();
     }
