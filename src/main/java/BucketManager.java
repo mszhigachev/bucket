@@ -1,19 +1,19 @@
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BucketManager {
-    private List<Config> config;
+    private List<Config> configs;
     private List<TokenBucket> bucketList;
 
     BucketManager() {
-        this.config = new ArrayList<>();
+        this.configs = new ArrayList<>();
         this.bucketList = new ArrayList<>();
     }
 
     public boolean consume(int count) {
-        boolean consumed = bucketList.stream().allMatch(bucket -> count <= bucket.getTokens());
-        if (consumed) {
+        if (bucketList.stream().allMatch(bucket -> count <= bucket.getTokens())) {
             bucketList.forEach(bucket -> bucket.consume(count));
             return true;
         }
@@ -35,17 +35,18 @@ public class BucketManager {
         }
 
         public Builder addConfiguration(Config config) {
-            manager.config.add(config);
+            manager.configs.add(config);
             return this;
         }
 
         public BucketManager build() throws Exception {
-            if (manager.config.size() > 0) {
-                for (int i = 0; i < manager.config.size(); i++) {
-                    manager.bucketList.add(new TokenBucket(manager.config.get(i).getCapacity(), manager.config.get(i).getRate()));
-                }
-
-                return manager;
+            if (manager.configs.size() > 0) {
+                this.manager.bucketList = manager
+                        .configs
+                        .stream()
+                        .map(config->new TokenBucket(config.getCapacity(),config.getRate()))
+                        .collect(Collectors.toList());
+                return this.manager;
             }
             throw new Exception("Empty config list");
         }
@@ -54,19 +55,19 @@ public class BucketManager {
 
 class TokenBucket {
     private final double tokencapacity;
-    private double tokens;
     private final double rate;
+    private double tokens;
     private long timestamp;
 
     TokenBucket(double capacity, long rate) {
         this.tokencapacity = capacity;
         this.rate = capacity / rate;
-        this.tokens = tokencapacity;
+        this.tokens = capacity;
         this.timestamp = new Date().getTime();
     }
 
     public double getTokens() {
-        if (this.tokens < tokencapacity) {
+        if (tokens < tokencapacity) {
             long now = new Date().getTime();
             double delta = rate * (now - timestamp);
             this.tokens = Math.min(tokencapacity, tokens + delta);

@@ -34,8 +34,27 @@ public class ConsumerTest {
     @Test
     public void testMultiBucketGretterCapNeg() throws Exception {
         Config config = new Config(10,100);
-        Config configg = new Config(20,100);
-        BucketManager multiBucket = new BucketManager.Builder().addConfiguration(config).addConfiguration(configg).build();
+        Config config1 = new Config(32,100);
+        Config config2 = new Config(22,100);
+        Config config3 = new Config(14,100);
+        Config config4 = new Config(24,100);
+        Config config5 = new Config(210,100);
+        Config config6 = new Config(250,100);
+        Config config7 = new Config(210,100);
+        Config config8 = new Config(120,100);
+
+        BucketManager multiBucket = new BucketManager
+                .Builder()
+                .addConfiguration(config)
+                .addConfiguration(config1)
+                .addConfiguration(config2)
+                .addConfiguration(config3)
+                .addConfiguration(config4)
+                .addConfiguration(config5)
+                .addConfiguration(config6)
+                .addConfiguration(config7)
+                .addConfiguration(config8)
+                .build();
 //        System.out.println(multiBucket.toString());
         assertFalse(multiBucket.consume(21));
     }
@@ -64,7 +83,7 @@ public class ConsumerTest {
         Config configg = new Config(20,100);
         BucketManager multiBucket = new BucketManager.Builder().addConfiguration(config).addConfiguration(configg).build();
 //        System.out.println(multiBucket.toString());
-        assertTrue(multiBucket.consume(10));
+        multiBucket.consume(10);
         Thread.sleep(150);
         assertTrue(multiBucket.consume(10));
     }
@@ -75,8 +94,7 @@ public class ConsumerTest {
         Config configg = new Config(20,100);
         BucketManager multiBucket = new BucketManager.Builder().addConfiguration(config).addConfiguration(configg).build();
 //        System.out.println(multiBucket.toString());
-        assertTrue(multiBucket.consume(10));
-        Thread.sleep(50);
+        multiBucket.consume(10);
         assertFalse(multiBucket.consume(10));
     }
 }
