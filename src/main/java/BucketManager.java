@@ -21,13 +21,6 @@ public final class BucketManager {
         return false;
     }
 
-    @Override
-    public String toString() {
-        return "BucketManager{" +
-                "bucketList=" + bucketList +
-                '}';
-    }
-
     public static class Builder {
         private List<Config> configs;
         private List<TokenBucket> bucketList;
@@ -87,13 +80,4 @@ class TokenBucket {
         }
     }
 
-    @Override
-    public String toString() {
-        return "TokenBucket{" +
-                "tokencapacity=" + tokencapacity +
-                ", tokens=" + tokens +
-                ", rate=" + rate +
-                ", timestamp=" + timestamp +
-                '}';
-    }
 }
