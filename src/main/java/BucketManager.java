@@ -1,4 +1,3 @@
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,13 +18,6 @@ public final class BucketManager {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "BucketManager{" +
-                "bucketList=" + bucketList +
-                '}';
     }
 
     public static class Builder {
@@ -87,13 +79,4 @@ class TokenBucket {
         }
     }
 
-    @Override
-    public String toString() {
-        return "TokenBucket{" +
-                "tokencapacity=" + tokencapacity +
-                ", tokens=" + tokens +
-                ", rate=" + rate +
-                ", timestamp=" + timestamp +
-                '}';
-    }
 }
