@@ -1,15 +1,16 @@
+import java.awt.image.AreaAveragingScaleFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BucketManager {
-    private List<Config> configs;
-    private List<TokenBucket> bucketList;
+public final class BucketManager {
+    private final List<Config> configs;
+    private final List<TokenBucket> bucketList;
 
-    BucketManager() {
-        this.configs = new ArrayList<>();
-        this.bucketList = new ArrayList<>();
+    private BucketManager(List<Config> configs, List<TokenBucket> bucketList) {
+        this.configs = configs;
+        this.bucketList = bucketList;
     }
 
     public boolean consume(int count) {
@@ -28,25 +29,26 @@ public class BucketManager {
     }
 
     public static class Builder {
-        private BucketManager manager;
+        private List<Config> configs;
+        private List<TokenBucket> bucketList;
 
         Builder() {
-            manager = new BucketManager();
+            this.configs = new ArrayList<>();
+            this.bucketList = new ArrayList<>();
         }
 
         public Builder addConfiguration(Config config) {
-            manager.configs.add(config);
+            this.configs.add(config);
             return this;
         }
 
         public BucketManager build() throws Exception {
-            if (manager.configs.size() > 0) {
-                this.manager.bucketList = manager
-                        .configs
+            if (this.configs.size() > 0) {
+                this.bucketList = configs
                         .stream()
                         .map(config->new TokenBucket(config.getCapacity(),config.getRate()))
                         .collect(Collectors.toList());
-                return this.manager;
+                return new BucketManager(configs,bucketList);
             }
             throw new Exception("Empty config list");
         }
